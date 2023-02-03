@@ -41,6 +41,43 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
                     ],
                 });
             }
+            if (typeOfMsg === 'simple_button_message') {
+                let button_id = incomingMessage.button_reply.id;
+            
+                if (button_id === 'speak_to_human') {
+                    await Whatsapp.sendText({
+                        recipientPhone: recipientPhone,
+                        message: `Arguably, chatbots are faster than humans.\nCall my human with the below details:`,
+                    });
+            
+                    await Whatsapp.sendContact({
+                        recipientPhone: recipientPhone,
+                        contact_profile: {
+                            addresses: [
+                                {
+                                    city: 'Nairobi',
+                                    country: 'Kenya',
+                                },
+                            ],
+                            name: {
+                                first_name: 'Daggie',
+                                last_name: 'Blanqx',
+                            },
+                            org: {
+                                company: 'Mom-N-Pop Shop',
+                            },
+                            phones: [
+                                {
+                                    phone: '+1 (555) 025-3483',
+                                },
+                                                    {
+                                    phone: '+254712345678',
+                                },
+                            ],
+                        },
+                    });
+                }
+            };
         }
         console.log('GET: Someone is pinging me!');
 
