@@ -87,7 +87,7 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
                         listOfSections,
                     });
                 }
-                
+
                 if (button_id === 'speak_to_human') {
                     await Whatsapp.sendText({
                         recipientPhone: recipientPhone,
@@ -120,6 +120,54 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
                             ],
                         },
                     });
+                }
+                if (selectionId.startsWith('product_')) {
+                    let product_id = selectionId.split('_')[1];
+                    let product = await Store.getProductById(product_id);
+                    const { price, title, description, category, image: imageUrl, rating } = product.data;
+                
+                    let emojiRating = (rvalue) => {
+                        rvalue = Math.floor(rvalue || 0); // generate as many star emojis as whole number ratings
+                        let output = [];
+                        for (var i = 0; i < rvalue; i++) output.push('⭐');
+                        return output.length ? output.join('') : 'N/A';
+                    };
+                
+                    let text = `_Title_: *${title.trim()}*\n\n\n`;
+                    text += `_Description_: ${description.trim()}\n\n\n`;
+                    text += `_Price_: $${price}\n`;
+                    text += `_Category_: ${category}\n`;
+                    text += `${rating?.count || 0} shoppers liked this product.\n`;
+                    text += `_Rated_: ${emojiRating(rating?.rate)}\n`;
+                
+                    await Whatsapp.sendImage({
+                        recipientPhone,
+                        url: imageUrl,
+                        caption: text,
+                    });
+                
+                    await Whatsapp.sendSimpleButtons({
+                        message: `Here is the product, what do you want to do next?`,
+                        recipientPhone: recipientPhone, 
+                        listOfButtons: [
+                            {
+                                title: 'Add to cart🛒',
+                                id: `add_to_cart_${product_id}`,
+                            },
+                            {
+                                title: 'Speak to a human',
+                                id: 'speak_to_human',
+                            },
+                            {
+                                title: 'See more products',
+                                id: 'see_categories',
+                            },
+                        ],
+                    });
+                }
+                if (typeOfMsg === 'radio_button_message') {
+                    let selectionId = incomingMessage.list_reply.id; // the customer clicked and submitted a radio button
+                    
                 }
             };
         }
