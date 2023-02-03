@@ -43,7 +43,19 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
             }
             if (typeOfMsg === 'simple_button_message') {
                 let button_id = incomingMessage.button_reply.id;
-            
+                if (button_id === 'see_categories') {
+                    let categories = await Store.getAllCategories(); 
+                    await Whatsapp.sendSimpleButtons({
+                        message: `We have several categories.\nChoose one of them.`,
+                        recipientPhone: recipientPhone, 
+                        listOfButtons: categories.data
+                            .map((category) => ({
+                                title: category,
+                                id: `category_${category}`,
+                            }))
+                            .slice(0, 3)
+                    });
+                }
                 if (button_id === 'speak_to_human') {
                     await Whatsapp.sendText({
                         recipientPhone: recipientPhone,
