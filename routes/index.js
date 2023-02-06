@@ -77,6 +77,39 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
                         listOfSections,
                     });
                 }
+                let message_id = incomingMessage.message_id; // This line already exists. Add the below lines...
+
+// Start of cart logic
+if (!CustomerSession.get(recipientPhone)) {
+    CustomerSession.set(recipientPhone, {
+        cart: [],
+    });
+}
+
+let addToCart = async ({ product_id, recipientPhone }) => {
+    let product = await Store.getProductById(product_id);
+    if (product.status === 'success') {
+        CustomerSession.get(recipientPhone).cart.push(product.data);
+    }
+};
+
+let listOfItemsInCart = ({ recipientPhone }) => {
+    let total = 0;
+    let products = CustomerSession.get(recipientPhone).cart;
+    total = products.reduce(
+        (acc, product) => acc + product.price,
+        total
+    );
+    let count = products.length;
+    return { total, products, count };
+};
+
+let clearCart = ({ recipientPhone }) => {
+    CustomerSession.get(recipientPhone).cart = [];
+};
+// End of cart logic
+
+if (typeOfMsg === 'text_message') { ... // This line already exists. Add the above lines...
                 if (button_id === 'see_categories') {
                     let categories = await Store.getAllCategories(); 
                     await Whatsapp.sendSimpleButtons({
