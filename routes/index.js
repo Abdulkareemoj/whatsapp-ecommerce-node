@@ -43,6 +43,40 @@ router.get('/meta_wa_callbackurl', async (req, res) => {
             }
             if (typeOfMsg === 'simple_button_message') {
                 let button_id = incomingMessage.button_reply.id;
+                if (typeOfMsg === 'radio_button_message') {
+                    let selectionId = incomingMessage.list_reply.id; // the customer clicked and submitted a radio button
+                    
+                }
+                if (button_id.startsWith('category_')) {
+                    let selectedCategory = button_id.split('category_')[1];
+                    let listOfProducts = await Store.getProductsInCategory(selectedCategory);
+                
+                    let listOfSections = [
+                        {
+                            title: `🏆 Top 3: ${selectedCategory}`.substring(0,24),
+                            rows: listOfProducts.data
+                                .map((product) => {
+                                    let id = `product_${product.id}`.substring(0,256);
+                                    let title = product.title.substring(0,21);
+                                    let description = `${product.price}\n${product.description}`.substring(0,68);
+                                   
+                                    return {
+                                        id,
+                                        title: `${title}...`,
+                                        description: `$${description}...`
+                                    };
+                                }).slice(0, 10)
+                        },
+                    ];
+
+                    await Whatsapp.sendRadioButtons({
+                        recipientPhone: recipientPhone,
+                        headerText: `#BlackFriday Offers: ${selectedCategory}`,
+                        bodyText: `Our Santa 🎅🏿 has lined up some great products for you based on your previous shopping history.\n\nPlease select one of the products below:`,
+                        footerText: 'Powered by: BMI LLC',
+                        listOfSections,
+                    });
+                }
                 if (button_id === 'see_categories') {
                     let categories = await Store.getAllCategories(); 
                     await Whatsapp.sendSimpleButtons({
