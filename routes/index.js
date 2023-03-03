@@ -136,8 +136,8 @@ router.post('/meta_wa_callbackurl', async (req, res) => {
             
                 await Whatsapp.sendRadioButtons({
                     recipientPhone: recipientPhone,
-                    headerText: `#BlackFriday Offers: ${selectedCategory}`,
-                    bodyText: `Our Santa 🎅🏿 has lined up some great products for you based on your previous shopping history.\n\nPlease select one of the products below:`,
+                    headerText: `#Offers: ${selectedCategory}`,
+                    bodyText: `Our Store has lined up some great products for you based on your previous shopping history.\n\nPlease select one of the products below:`,
                     footerText: 'Powered by: BMI LLC',
                     listOfSections,
                 });
