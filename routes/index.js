@@ -48,7 +48,7 @@ router.post('/meta_wa_callbackurl', async (req, res) => {
             let message_id = incomingMessage.message_id; // extract the message id
             if (typeOfMsg === 'text_message') {
                 await Whatsapp.sendSimpleButtons({
-                    message: `Hey ${recipientName}, \nYou are speaking to a chatbot.\nWhat do you want to do next?`,
+                    message: `Hey ${recipientName}, \nYou are now talking to a chatbot.\nWhat do you want to do next?`,
                     recipientPhone: recipientPhone, 
                     listOfButtons: [
                         {
@@ -68,7 +68,7 @@ router.post('/meta_wa_callbackurl', async (req, res) => {
                 if (button_id === 'speak_to_human') {
                     await Whatsapp.sendText({
                         recipientPhone: recipientPhone,
-                        message: `Arguably, chatbots are faster than humans.\nCall my human with the below details:`,
+                        message: `Arguably, chatbots are faster than humans.\n You can however call my human with the following details:`,
                     });
             
                     await Whatsapp.sendContact({
@@ -76,23 +76,23 @@ router.post('/meta_wa_callbackurl', async (req, res) => {
                         contact_profile: {
                             addresses: [
                                 {
-                                    city: 'Nairobi',
-                                    country: 'Kenya',
+                                    city: 'Ibadan',
+                                    country: 'Nigeria',
                                 },
                             ],
                             name: {
-                                first_name: 'Daggie',
-                                last_name: 'Blanqx',
+                                first_name: 'Fname',
+                                last_name: 'Lname',
                             },
                             org: {
-                                company: 'Mom-N-Pop Shop',
+                                company: 'Some Shop',
                             },
                             phones: [
                                 {
                                     phone: '+1 (555) 025-3483',
                                 },
                                                     {
-                                    phone: '+254712345678',
+                                    phone: '+2348073051942',
                                 },
                             ],
                         },
