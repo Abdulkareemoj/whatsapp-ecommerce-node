@@ -111,6 +111,38 @@ router.post('/meta_wa_callbackurl', async (req, res) => {
                             .slice(0, 3)
                     });
                 }
+                
+                if (button_id.startsWith('category_')) {
+                let selectedCategory = button_id.split('category_')[1];
+                let listOfProducts = await Store.getProductsInCategory(selectedCategory);
+            
+                let listOfSections = [
+                    {
+                        title: `🏆 Top 3: ${selectedCategory}`.substring(0,24),
+                        rows: listOfProducts.data
+                            .map((product) => {
+                                let id = `product_${product.id}`.substring(0,256);
+                                let title = product.title.substring(0,21);
+                                let description = `${product.price}\n${product.description}`.substring(0,68);
+                               
+                                return {
+                                    id,
+                                    title: `${title}...`,
+                                    description: `$${description}...`
+                                };
+                            }).slice(0, 10)
+                    },
+                ];
+            
+                await Whatsapp.sendRadioButtons({
+                    recipientPhone: recipientPhone,
+                    headerText: `#BlackFriday Offers: ${selectedCategory}`,
+                    bodyText: `Our Santa 🎅🏿 has lined up some great products for you based on your previous shopping history.\n\nPlease select one of the products below:`,
+                    footerText: 'Powered by: BMI LLC',
+                    listOfSections,
+                });
+            }
+
             };
 
 
